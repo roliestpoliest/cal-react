@@ -29,7 +29,33 @@ class UploadICS extends Component {
     for(let i = 0; i < lines.length; i++){
         //DTSTART, DTEND, SUMMARY, LOCATION
         if(i < lines.length && lines[i].indexOf("END:VEVENT") == 0){
-            let calendarInstance = new calendarInfo(start, end, summary, location, description);
+
+            console.log("start: " + start);
+            let year = parseInt(start.slice(0, 4));
+            let month = parseInt(start.slice(4, 6));
+            let day = parseInt(start.slice(6, 8));
+            let hour = parseInt(start.slice(9, 11));
+            let minute = parseInt(start.slice(11, 13));
+            let second = parseInt(start.slice(13, 15));
+            let startDate = new Date(year, month, day, hour, minute, second);
+            console.log("start: " + startDate);
+
+            console.log("end: " + end);
+            year = parseInt(end.slice(0, 4));
+            month = parseInt(end.slice(4, 6));
+            day = parseInt(end.slice(6, 8));
+            hour = parseInt(end.slice(9, 11));
+            minute = parseInt(end.slice(11, 13));
+            second = parseInt(end.slice(13, 15));
+            let endDate = new Date(year, month, day, hour, minute, second);
+            console.log("end: " + endDate);
+
+            var diff =(startDate.getTime() - endDate.getTime()) / 1000;
+            diff /= 60;
+            let duration = Math.abs(Math.round(diff));
+            console.log("duration: " + duration)
+
+            let calendarInstance = new calendarInfo(start, end, summary, location, description, duration);
             this.state.calendarEvents.push(calendarInstance);
             console.log(calendarInstance);
         }
@@ -49,14 +75,8 @@ class UploadICS extends Component {
         else if(lines[i].indexOf("DESCRIPTION") == 0){
             description = lines[i].replace("DESCRIPTION:", "");
         }
-
     }
-    // let calendarInstance = new calendarInfo(start, end, summary, location);
-    // this.state.calendarEvents.push(calendarInstance);
-    // console.log(calendarInstance);
-
     console.log(this.state.calendarEvents);
-
     };
     reader.readAsText(e.target.files[0])
   }
